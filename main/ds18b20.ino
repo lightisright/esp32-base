@@ -23,7 +23,7 @@ float ds18b20_getTemperature(uint8_t index) {
   return sensors.getTempCByIndex(index);
 }
 
-char* ds18b20_getJson(String esp32_name) {
+char* ds18b20_getJson() {
 
   //Serial.print("NB DS18b20: ");
   //Serial.println(sensors.getDS18Count());
@@ -37,7 +37,7 @@ char* ds18b20_getJson(String esp32_name) {
     if ( strlen(ds18b20_json_complete) > 2 ) {
       strcat(ds18b20_json_complete, ", ");
     }
-    sprintf(ds18b20_json, "\"%s-ds18b20-%02d\": %f", esp32_name, index, ds18b20_getTemperature(index));
+    sprintf(ds18b20_json, "\"%s-ds18b20-%02d\": %f", esp32_id, index, ds18b20_getTemperature(index));
     strcat(ds18b20_json_complete, ds18b20_json);
   }
 

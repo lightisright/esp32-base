@@ -25,9 +25,9 @@ float dht22_getHumidity() {
   return dht.readHumidity(); 
 }
 
-char* dht22_getJson(String dht22_name, String id) {
+char* dht22_getJson(String id) {
 
-  sprintf(dht_json, "{\"name\": \"%s\", \"id\": \"%s\", \"temp\": %f, \"hum\": %f}", dht22_name, id, dht22_getTemperature(), dht22_getHumidity());
+  sprintf(dht_json, "{\"name\": \"%s\", \"id\": \"%s\", \"temp\": %f, \"hum\": %f}", esp32_id, id, dht22_getTemperature(), dht22_getHumidity());
 
   return &dht_json[0];
 }
