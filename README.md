@@ -3,7 +3,7 @@
 
 ## Configuration
 
-Edit `vars.ino` file to set your own modules configuration
+Edit `vars.h` file to set your own modules configuration
 
 ```
 // ------------------------------------------------------------------

@@ -1,5 +1,11 @@
+#include "vars.h"
+
 static uint8_t taskCoreZero = 0;
 static uint8_t taskCoreOne  = 1;
+
+// ------------------------------------------------------------------
+// ESP32 module ID for MQTT messages
+// ------------------------------------------------------------------
 
 void setup() {
 
