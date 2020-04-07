@@ -23,9 +23,9 @@ const char* esp32_id = "MY_ESP32";
 const int wifi_LedPin = 25;         // Red LED
 
 // MQTT Broker IP address
+// NB: for subscription management, see functions pointer in "core_mqtt.ino" related to functions in "mqtt_callback.ino" file
 const char* mqtt_server = "192.168.0.1";
 const int mqtt_port = 1883;
-const int mqtt_max_connexion_attempts = 10;
 
 // MQTT status pin
 const int mqtt_StatusLedPin = 33;   // Yellow LED
@@ -40,6 +40,7 @@ const int pump_RelayPin = 16;
 const int heater_RelayPin = 17;
 
 // Touch pins
+// NB: for callback button management, see functions pointer in "touch_mqtt.ino" related to functions in "touch_callback.ino" file
 /*
   Touch0 >> GPIO4
   Touch1 >>  Not available on Devkit 30 pin version but available on Devkit 36 pin version 
