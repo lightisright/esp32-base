@@ -39,20 +39,20 @@ bool wifi_status() {
 bool __wifi_connect() {
 
   // We start by connecting to a WiFi network
-  Serial.println();
-  Serial.print("Connecting to ");
+  Serial.println("Connecting to ");
   Serial.println(ssid);
-
-  WiFi.begin(ssid, password);
-  delay(2000);
+  Serial.println("WiFi blinking LED means connexion is in progress... waiting...");
 
   int counter = 0;
-  while (WiFi.status() != WL_CONNECTED && counter < 30) {
-    Serial.println("WiFi not connected... waiting...");
+  while (WiFi.status() != WL_CONNECTED && counter < 60) {
+    // Try connexion every 5 seconds
+    if ( counter % 5 == 0 ) {
+      WiFi.begin(ssid, password);
+    }
     digitalWrite(wifi_LedPin, HIGH);
-    delay(300);
+    delay(500);
     digitalWrite(wifi_LedPin, LOW);
-    delay(200);
+    delay(500);
     counter++;
   }
 
