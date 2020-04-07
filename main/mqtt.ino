@@ -61,41 +61,32 @@ bool __mqtt_up() {
 
 bool __mqtt_connect() {
 
-  int connexionCounter = 0;
-  
-  // Loop until we're reconnected
-  while (!__mqtt_up() && connexionCounter < mqtt_max_connexion_attempts) {
-    
-    Serial.println("MQTT: Attempting MQTT connection...");
+  Serial.println("MQTT: Attempting MQTT connection...");
+  Serial.println("MQTT blinking LED means connexion is in progress... waiting 60s for connexion...");
 
-    // Attempt to connect
-    if (client.connect(esp32_id)) {
-      digitalWrite(mqtt_StatusLedPin, LOW);
-      Serial.println("MQTT: connected to server");
-      return true;
+  int waitloopcounter=0;
+  while(!__mqtt_up() && waitloopcounter < 60) {
+    // try reconnexion every 5 seconds
+    if ( waitloopcounter % 5 ==0 ) {
+      client.connect(esp32_id);
     }
-    
-    // Attempt to connexion failed
-    else {
-      Serial.print("MQTT: connexion to server failed, rc=");
-      Serial.println(client.state());
-      Serial.println("MQTT: try again in 60 seconds...");
-      
-      // Wait 5 seconds before retrying & increase counter
-      int waitloopcounter=0;
-      while(waitloopcounter < 60) {
-        digitalWrite(mqtt_StatusLedPin, LOW);
-        delay(500);
-        digitalWrite(mqtt_StatusLedPin, HIGH);
-        delay(500);
-        waitloopcounter++;
-      }
-      connexionCounter++;
-    }
+    digitalWrite(mqtt_StatusLedPin, LOW);
+    delay(500);
+    digitalWrite(mqtt_StatusLedPin, HIGH);
+    delay(500);
+    waitloopcounter++;
+  }
+
+  if (__mqtt_up()) {
+    digitalWrite(mqtt_StatusLedPin, LOW);
+    Serial.println("MQTT: connected to server");
+    return true;
   }
 
   /* FALLBACK MSG */
-  Serial.println("MQTT: max connexion attempts reached, abort MQTT server connexion...");
+  digitalWrite(mqtt_StatusLedPin, HIGH);
+  Serial.print("MQTT: connexion to server failed, rc=");
+  Serial.println(client.state());
   return false;
 }
 
