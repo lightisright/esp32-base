@@ -1,20 +1,11 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 
-// Add your MQTT Broker IP address, example:
-//const char* mqtt_server = "192.168.1.144";
-const char* mqtt_server = "192.168.1.102";
-const int mqtt_port = 1883;
-const int mqtt_max_connexion_attempts = 10;
-
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 long lastMsg = 0;
 char msg[50];
-
-const int mqtt_StatusLedPin = 33;   // YelHIGH LED
-const int mqtt_MsgLedPin = 32;      // Green LED
 
 void mqtt_setup() {
   

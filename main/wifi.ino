@@ -5,9 +5,6 @@
 
 #include <WiFi.h>
 
-// LED Pin
-const int wifi_LedPin = 25;   // Red LED
-
 void wifi_setup() {
 
   pinMode(wifi_LedPin, OUTPUT);

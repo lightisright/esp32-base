@@ -1,6 +1,3 @@
-#define touch_pin_numer T0
-const int touch_led_pin_number = 32;
-
 const int VALUE_THRESHOLD = 30;
 
 int TOUCH_SENSOR_VALUE;

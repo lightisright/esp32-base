@@ -4,7 +4,6 @@
 #include "DHT.h"
 
 #define DHTTYPE DHT22
-uint8_t DHTPin = 27;
 
 DHT dht(DHTPin, DHTTYPE); 
 char dht_json[100];
