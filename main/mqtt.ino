@@ -11,30 +11,44 @@ void mqtt_setup() {
   
   client.setServer(mqtt_server, mqtt_port);
 
-  // no subscription for now, publish only
-  //client.setCallback(callback);
-
   // configure status LED
   pinMode(mqtt_StatusLedPin, OUTPUT);
   digitalWrite(mqtt_StatusLedPin, HIGH);
 
   // configure msg LED
   pinMode(mqtt_MsgLedPin, OUTPUT);
-  digitalWrite(mqtt_MsgLedPin, HIGH);
+  digitalWrite(mqtt_MsgLedPin, LOW);
 }
+
+void mqtt_setcallback(void (&callback_func)(char* topic, byte* message, unsigned int length)) {
+  client.setCallback(callback_func);
+}
+
 
 void mqtt_manage() {
 
   while(true) {
-
     if ( !__mqtt_up() ) {
+      Serial.println("MQTT: Service down... Attempting new connexion...");
       if ( !__mqtt_connect() ) {
-        Serial.println("MQTT: CONNEXION FAILED - wait 2 minutes before new connexion attempt");
+        Serial.println("MQTT: CONNEXION FAILED - wait 2 minutes before new connexion attempt...");
+      }
+      else {
+        Serial.println("MQTT: Subscribing to topics & start loop...");
+        client.subscribe("esp32swim");
+        client.subscribe("esp32swim/heater");
+        client.subscribe("esp32swim/pump");
+        //delay(1000);
+        while(client.loop()) { delay(1000); }
       }
     }
     // wait 2 minutes between 2 connexion checks / attempts
-    delay(120000);
+    delay(2*60*1000);
   }
+}
+
+void mqtt_loop() {
+  client.loop();
 }
 
 bool __mqtt_up() {
@@ -52,26 +66,24 @@ bool __mqtt_connect() {
   // Loop until we're reconnected
   while (!__mqtt_up() && connexionCounter < mqtt_max_connexion_attempts) {
     
-    Serial.print("Attempting MQTT connection...");
-    
+    Serial.println("MQTT: Attempting MQTT connection...");
+
     // Attempt to connect
-    if (client.connect("ESP32")) {
+    if (client.connect(esp32_id)) {
       digitalWrite(mqtt_StatusLedPin, LOW);
       Serial.println("MQTT: connected to server");
-      // Subscribe - not for now
-      //client.subscribe("esp32/output");
       return true;
     }
     
     // Attempt to connexion failed
     else {
       Serial.print("MQTT: connexion to server failed, rc=");
-      Serial.print(client.state());
-      Serial.println("MQTT: try again in 30 seconds");
+      Serial.println(client.state());
+      Serial.println("MQTT: try again in 60 seconds...");
       
       // Wait 5 seconds before retrying & increase counter
       int waitloopcounter=0;
-      while(waitloopcounter < 30) {
+      while(waitloopcounter < 60) {
         digitalWrite(mqtt_StatusLedPin, LOW);
         delay(500);
         digitalWrite(mqtt_StatusLedPin, HIGH);
@@ -107,7 +119,7 @@ void mqtt_publish(char* subject, char* msg) {
 
 
 /* for subscription (later) */
-void callback(char* topic, byte* message, unsigned int length) {
+void callback_func_sample(char* topic, byte* message, unsigned int length) {
   
   Serial.print("Message arrived on topic: ");
   Serial.print(topic);
