@@ -1,3 +1,9 @@
+void mqtt_subscriptions() {
+  client.subscribe("esp32swim");
+  client.subscribe("esp32swim/heater");
+  client.subscribe("esp32swim/pump");
+}
+
 
 /* for MQTT subscription if needed */
 void mqtt_callback(char* topic, byte* message, unsigned int length) {

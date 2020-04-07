@@ -11,5 +11,5 @@ void core_mqtt( void * pvParameters ){
 
     delay(1000);
 
-    mqtt_manage();
+    mqtt_manage(mqtt_subscriptions);
 }

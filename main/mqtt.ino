@@ -25,7 +25,7 @@ void mqtt_setcallback(void (&callback_func)(char* topic, byte* message, unsigned
 }
 
 
-void mqtt_manage() {
+void mqtt_manage(void (&mqtt_subscription_func)()) {
 
   while(true) {
     if ( !__mqtt_up() ) {
@@ -35,9 +35,7 @@ void mqtt_manage() {
       }
       else {
         Serial.println("MQTT: Subscribing to topics & start loop...");
-        client.subscribe("esp32swim");
-        client.subscribe("esp32swim/heater");
-        client.subscribe("esp32swim/pump");
+        mqtt_subscription_func();
         //delay(1000);
         while(client.loop()) { delay(1000); }
       }
