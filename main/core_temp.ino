@@ -1,10 +1,14 @@
-void coreTaskTwo( void * pvParameters ){
+void core_temp( void * pvParameters ){
   
     String taskMessage = "Task (DHT) running on core ";
     taskMessage = taskMessage + xPortGetCoreID();
-    Serial.println(taskMessage);  //log para o serial monitor
+    Serial.println(taskMessage);
 
-    delay(3000);
+    dht_setup();
+    ds18b20_setup();
+
+    // leave some time to init one wire bus
+    delay(5000);
     
     while(true){
     
