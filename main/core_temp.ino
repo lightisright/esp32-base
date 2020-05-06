@@ -20,6 +20,6 @@ void core_temp( void * pvParameters ){
       Serial.println(ds18b20_getJson());
       mqtt_publish("esp32swim/ds18b20", ds18b20_getJson());
       
-      delay(10000);
+      delay(1000*60*5);   // wait 5mn between 2 messages
     } 
 }
