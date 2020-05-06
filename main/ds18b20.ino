@@ -31,15 +31,15 @@ char* ds18b20_getJson() {
 
   for(uint8_t index=0; index < sensors.getDS18Count(); index++) {
 
-    uint8_t addr;
+    DeviceAddress addr;
     
     //Serial.print("DS18b20 Temperature: ");
     //Serial.println(ds18b20_getTemperature(index));
     if ( strlen(ds18b20_json_complete) > 2 ) {
       strcat(ds18b20_json_complete, ", ");
     }
-    sensors.getAddress(&addr, index);
-    sprintf(ds18b20_json, "\"%s-ds18b20-%08jx\": %f", esp32_id, (uintmax_t)addr, ds18b20_getTemperature(index));
+    sensors.getAddress(addr, index);
+    sprintf(ds18b20_json, "\"%s-ds18b20-%hx\": %f", esp32_id, addr, ds18b20_getTemperature(index));
     strcat(ds18b20_json_complete, ds18b20_json);
   }
 
