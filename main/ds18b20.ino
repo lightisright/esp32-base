@@ -10,6 +10,7 @@ char ds18b20_json_complete[1000];
 
 void ds18b20_setup() {
 
+  getDeviceAddresses();
   sensors.begin();
 }
 
@@ -29,16 +30,55 @@ char* ds18b20_getJson() {
   ds18b20_json_complete[1]='\0';
 
   for(uint8_t index=0; index < sensors.getDS18Count(); index++) {
+
+    uint8_t addr;
+    
     //Serial.print("DS18b20 Temperature: ");
     //Serial.println(ds18b20_getTemperature(index));
     if ( strlen(ds18b20_json_complete) > 2 ) {
       strcat(ds18b20_json_complete, ", ");
     }
-    sprintf(ds18b20_json, "\"%s-ds18b20-%02d\": %f", esp32_id, index, ds18b20_getTemperature(index));
+    sensors.getAddress(&addr, index);
+    sprintf(ds18b20_json, "\"%s-ds18b20-%08jx\": %f", esp32_id, (uintmax_t)addr, ds18b20_getTemperature(index));
     strcat(ds18b20_json_complete, ds18b20_json);
   }
 
   strcat(ds18b20_json_complete, "}");
 
   return &ds18b20_json_complete[0];
+}
+
+
+// find out your DS18B20 addresses
+// see also: https://github.com/PaulStoffregen/OneWire/blob/master/OneWire.h
+void getDeviceAddresses(void) {
+  byte i;
+  byte addr[8];
+  
+  Serial.println("Getting the address...\n\r");
+  /* initiate a search for the OneWire object we created and read its value into
+  addr array we declared above*/
+  
+  while(oneWire.search(addr)) {
+    Serial.print("The address is:\t");
+    //read each byte in the address array
+    for( i = 0; i < 8; i++) {
+      Serial.print("0x");
+      if (addr[i] < 16) {
+        Serial.print('0');
+      }
+      // print each byte in the address array in hex format
+      Serial.print(addr[i], HEX);
+      if (i < 7) {
+        Serial.print(", ");
+      }
+    }
+    // a check to make sure that what we read is correct.
+    if ( OneWire::crc8( addr, 7) != addr[7]) {
+        Serial.print("CRC is not valid!\n");
+        //return;
+    }
+  }
+  oneWire.reset_search();
+  return;
 }
