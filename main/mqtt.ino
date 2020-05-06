@@ -45,10 +45,6 @@ void mqtt_manage(void (&mqtt_subscription_func)()) {
   }
 }
 
-void mqtt_loop() {
-  client.loop();
-}
-
 bool __mqtt_up() {
   bool status = ( wifi_status() && client.connected() );
   if ( !status ) {
