@@ -96,9 +96,9 @@ void mqtt_publish(char* subject, char* msg) {
   }
   
   client.publish(subject, msg);
-  digitalWrite(mqtt_MsgLedPin, LOW);
-  delay(200);
   digitalWrite(mqtt_MsgLedPin, HIGH);
+  delay(200);
+  digitalWrite(mqtt_MsgLedPin, LOW);
 }
 
 
@@ -125,11 +125,15 @@ void callback_func_sample(char* topic, byte* message, unsigned int length) {
     Serial.print("Changing output to ");
     if(messageTemp == "on"){
       Serial.println("on");
+      digitalWrite(mqtt_MsgLedPin, HIGH);
+      delay(200);
       digitalWrite(mqtt_MsgLedPin, LOW);
     }
     else if(messageTemp == "off"){
       Serial.println("off");
       digitalWrite(mqtt_MsgLedPin, HIGH);
+      delay(200);
+      digitalWrite(mqtt_MsgLedPin, LOW);
     }
   }
 }
