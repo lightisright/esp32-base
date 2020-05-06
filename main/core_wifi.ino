@@ -11,5 +11,5 @@ void core_wifi( void * pvParameters ){
 
     Serial.println(taskMessage);  //log para o serial monitor
 
-    wifi_manage(30*1000);
+    wifi_manage(30*1000);  // connect & check connection every 3mn
 }
