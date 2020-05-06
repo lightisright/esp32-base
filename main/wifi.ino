@@ -48,6 +48,8 @@ bool __wifi_connect() {
     // Try connexion every 5 seconds
     if ( counter % 5 == 0 ) {
       WiFi.begin(ssid, password);
+      delay(150);
+      WiFi.setHostname(esp32_id);
     }
     digitalWrite(wifi_LedPin, HIGH);
     delay(500);
