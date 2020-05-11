@@ -31,7 +31,7 @@ char* ds18b20_getJson() {
 
   for(uint8_t index=0; index < sensors.getDS18Count(); index++) {
 
-    DeviceAddress addr;
+    DeviceAddress addr;  // typedef uint_8 DeviceAddress[8]
     
     //Serial.print("DS18b20 Temperature: ");
     //Serial.println(ds18b20_getTemperature(index));
@@ -39,7 +39,7 @@ char* ds18b20_getJson() {
       strcat(ds18b20_json_complete, ", ");
     }
     sensors.getAddress(addr, index);
-    sprintf(ds18b20_json, "\"%s-ds18b20-%hx\": %f", esp32_id, addr, ds18b20_getTemperature(index));
+    sprintf(ds18b20_json, "\"%s-ds18b20-%hx%hx%hx%hx%hx%hx%hx%hx\": %f", esp32_id, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], ds18b20_getTemperature(index));
     strcat(ds18b20_json_complete, ds18b20_json);
   }
 
