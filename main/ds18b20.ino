@@ -11,12 +11,12 @@ char ds18b20_json_complete[1000];
 void ds18b20_setup() {
 
   getDeviceAddresses();
-  sensors.begin();
+  //sensors.begin();
 }
 
 float ds18b20_getTemperature(uint8_t index) {
   
-  sensors.requestTemperatures(); 
+  //sensors.requestTemperatures(); 
 
   return sensors.getTempCByIndex(index);
 }
@@ -29,9 +29,12 @@ char* ds18b20_getJson() {
   ds18b20_json_complete[0]='{';
   ds18b20_json_complete[1]='\0';
 
+  sensors.begin();
+  sensors.requestTemperatures();
+  
   for(uint8_t index=0; index < sensors.getDS18Count(); index++) {
 
-    DeviceAddress addr;
+    DeviceAddress addr;  // typedef uint_8 DeviceAddress[8]
     
     //Serial.print("DS18b20 Temperature: ");
     //Serial.println(ds18b20_getTemperature(index));
