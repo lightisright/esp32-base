@@ -26,6 +26,13 @@ void wifi_manage(int checkDelay) {
 
       delay(checkDelay);
     }
+    else {
+  
+      /**
+       * Check OTA server client connexion if network connexion is up
+       */
+      ota_manage();
+    }
   }
 }
 
@@ -49,7 +56,7 @@ bool __wifi_connect() {
     if ( counter % 5 == 0 ) {
       WiFi.begin(ssid, password);
       delay(150);
-      WiFi.setHostname(esp32_id);
+      WiFi.setHostname(esp32_id.c_str());
     }
     digitalWrite(wifi_LedPin, HIGH);
     delay(500);
@@ -64,6 +71,12 @@ bool __wifi_connect() {
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
+
+    /**
+     * Setup OTA server if connexion is up
+     */
+    ota_setup();
+
     return true;
   }
 
