@@ -8,28 +8,43 @@ DallasTemperature sensors(&oneWire);
 char ds18b20_json[100];
 char ds18b20_json_complete[1000];
 
+static int max_reset_loop = 12;
+int reset_counter = 0;
+
+uint8_t ds18b20_nb_devices = 0;
+
 void ds18b20_setup() {
 
-  getDeviceAddresses();
-  //sensors.begin();
-}
+  // for printing ds18b20 addresses (debug)
+  //getDeviceAddresses();
 
-float ds18b20_getTemperature(uint8_t index) {
-  
-  //sensors.requestTemperatures(); 
+  sensors.setWaitForConversion(true);
+  sensors.begin();
 
-  return sensors.getTempCByIndex(index);
+  // leave some time to init one wire bus
+  delay(3000);
+
+  // reset reset counter
+  reset_counter=0;
+  ds18b20_nb_devices = sensors.getDS18Count();
+  ds18b20_nb_devices = sensors.getDS18Count();
 }
 
 char* ds18b20_getJson() {
 
   //Serial.print("NB DS18b20: ");
   //Serial.println(sensors.getDS18Count());
+
+  // reinit oneWire bus if necessary
+  if (ds18b20_nb_devices < sensors.getDS18Count() || reset_counter >= max_reset_loop) {
+    ds18b20_setup();
+  }
+  // increment reset counter
+  reset_counter++;
   
   ds18b20_json_complete[0]='{';
   ds18b20_json_complete[1]='\0';
 
-  sensors.begin();
   sensors.requestTemperatures();
   
   for(uint8_t index=0; index < sensors.getDS18Count(); index++) {
@@ -42,7 +57,7 @@ char* ds18b20_getJson() {
       strcat(ds18b20_json_complete, ", ");
     }
     sensors.getAddress(addr, index);
-    sprintf(ds18b20_json, "\"%s_ds18b20_%02hx%02hx-%02hx%02hx%02hx%02hx%02hx%02hx\": %.1f", esp32_id, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], ds18b20_getTemperature(index));
+    sprintf(ds18b20_json, "\"%02hx%02hx-%02hx%02hx%02hx%02hx%02hx%02hx\": %.1f", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], sensors.getTempCByIndex(index));
     strcat(ds18b20_json_complete, ds18b20_json);
   }
 
@@ -51,6 +66,30 @@ char* ds18b20_getJson() {
   return &ds18b20_json_complete[0];
 }
 
+/**
+ * Get DS18B20 temp by address (needs addresses as parameter)
+ */
+char* ds18b20_getJsonByAddress(uint8_t *addresses, int nb_sensors) {
+
+  ds18b20_json_complete[0]='{';
+  ds18b20_json_complete[1]='\0';
+  uint8_t addr[8];
+
+  sensors.requestTemperatures();
+
+  for(int i=0; i < nb_sensors*8; i+=8) {
+    *addr = addresses[i];
+    if ( strlen(ds18b20_json_complete) > 2 ) {
+      strcat(ds18b20_json_complete, ", ");
+    }
+    sprintf(ds18b20_json, "\"%02hx%02hx-%02hx%02hx%02hx%02hx%02hx%02hx\": %.1f", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], sensors.getTempC(addr));
+    strcat(ds18b20_json_complete, ds18b20_json);
+  }
+
+  strcat(ds18b20_json_complete, "}");
+
+  return &ds18b20_json_complete[0];
+}
 
 // find out your DS18B20 addresses
 // see also: https://github.com/PaulStoffregen/OneWire/blob/master/OneWire.h
@@ -62,6 +101,9 @@ void getDeviceAddresses(void) {
   /* initiate a search for the OneWire object we created and read its value into
   addr array we declared above*/
   
+  ds18b20_json_complete[0]='{';
+  ds18b20_json_complete[1]='\0';
+
   while(oneWire.search(addr)) {
     Serial.print("The address is:\t");
     //read each byte in the address array
@@ -82,6 +124,9 @@ void getDeviceAddresses(void) {
         //return;
     }
   }
+
+  strcat(ds18b20_json_complete, "}");
+
   oneWire.reset_search();
   return;
 }
