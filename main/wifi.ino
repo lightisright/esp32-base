@@ -27,7 +27,7 @@ void wifi_manage(int checkDelay) {
       delay(checkDelay);
     }
     else {
-  
+
       /**
        * Check OTA server client connexion if network connexion is up
        */
@@ -67,9 +67,7 @@ bool __wifi_connect() {
 
   if ( WiFi.status() == WL_CONNECTED ) {
     digitalWrite(wifi_LedPin, LOW);
-    Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
+    Serial.print("WiFi connected - IP address: ");
     Serial.println(WiFi.localIP());
 
     /**
