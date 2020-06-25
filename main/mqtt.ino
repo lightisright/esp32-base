@@ -29,12 +29,13 @@ void mqtt_manage(void (&mqtt_subscription_func)()) {
 
   while(true) {
     if ( !__mqtt_up() ) {
-      Serial.println("MQTT: Service down... Attempting new connexion...");
+      mqtt_pub_warning("MQTT: Service down... Attempting new connexion...");
       if ( !__mqtt_connect() ) {
-        Serial.println("MQTT: CONNEXION FAILED - wait 2 minutes before new connexion attempt...");
+        mqtt_pub_error("MQTT: CONNEXION FAILED - wait 2 minutes before new connexion attempt...");
       }
       else {
-        Serial.println("MQTT: Subscribing to topics & start loop...");
+        mqtt_pub_notify("MQTT: IP address: "+WiFi.localIP().toString());
+        mqtt_pub_notify("MQTT: Subscribing to topics & start loop...");
         mqtt_subscription_func();
         //delay(1000);
         while(client.loop()) { delay(1000); }
@@ -107,59 +108,6 @@ void mqtt_publish(String topic, String payload) {
   else {
     Serial.println("mqtt_publish: FAILED - topic:"+mqtt_topic+" - payload:"+payload);
   }
-}
-
-// Format topic to xxxx/yyyyy
-// - overload topic root with esp32 id if no root present
-String mqtt_format_topic(String topic) {
-  
-  String mqtt_topic = topic;
-  if ( topic.indexOf("/")==-1 ) {
-    mqtt_topic = esp32_id+"/"+topic;
-  }
-
-  return(mqtt_topic);
-}
-
-
-/**
- * MQTT Pub Helpers
- */
-
-void mqtt_pub(String topic, String msg) {
-  mqtt_publish(topic, "{\"msg\":\""+msg+"\"}");
-}
-
-void mqtt_pub(String topic, String msg, String payload) {
-  mqtt_publish(topic, "{\"msg\":\""+msg+"\", \"payload\":{"+payload+"}}");
-}
-
-void mqtt_pub_notify(String msg) {
-  mqtt_pub("notify", msg);
-}
-
-void mqtt_pub_notify(String msg, String payload) {
-  mqtt_pub("notify", msg, payload);
-}
-
-void mqtt_pub_warning(String msg) {
-  mqtt_pub_notify(msg);
-  mqtt_publish("warning", msg);
-}
-
-void mqtt_pub_warning(String msg, String payload) {
-  mqtt_pub_notify(msg, payload);
-  mqtt_pub("warning", msg, payload);
-}
-
-void mqtt_pub_error(String msg) {
-  mqtt_pub_notify(msg);
-  mqtt_publish("error", msg);
-}
-
-void mqtt_pub_error(String msg, String payload) {
-  mqtt_pub_notify(msg, payload);
-  mqtt_pub("error", msg, payload);
 }
 
 /**
