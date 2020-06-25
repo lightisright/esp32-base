@@ -12,6 +12,10 @@ void dht_setup() {
 
   pinMode(DHTPin, INPUT);
   dht.begin();
+
+  // leave some time to init dht22
+  delay(1000);
+
 }
 
 float dht22_getTemperature() {
@@ -26,7 +30,7 @@ float dht22_getHumidity() {
 
 char* dht22_getJson(String id) {
 
-  sprintf(dht_json, "{\"name\": \"%s\", \"id\": \"%s\", \"temp\": %f, \"hum\": %f}", esp32_id, id, dht22_getTemperature(), dht22_getHumidity());
+  sprintf(dht_json, "{\"name\": \"%s\", \"id\": \"%s\", \"temp\": %.1f, \"hum\": %.0f}", esp32_id.c_str(), id, dht22_getTemperature(), dht22_getHumidity());
 
   return &dht_json[0];
 }
