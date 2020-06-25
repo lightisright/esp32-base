@@ -62,7 +62,7 @@ bool __mqtt_connect() {
   while(!__mqtt_up() && waitloopcounter < 60) {
     // try reconnexion every 5 seconds
     if ( waitloopcounter % 5 ==0 ) {
-      client.connect(esp32_id);
+      client.connect(esp32_id.c_str());
     }
     digitalWrite(mqtt_StatusLedPin, LOW);
     delay(500);
@@ -84,24 +84,87 @@ bool __mqtt_connect() {
   return false;
 }
 
-void mqtt_publish(char* subject, char* msg) {
+void mqtt_publish(String topic, String payload) {
 
+  String mqtt_topic = mqtt_format_topic(topic);
+  
+  
+  // MQTT connexion check
   if ( ! __mqtt_up() ) {
     if ( !__mqtt_connect() ) {
-      Serial.print("MQTT down: can't publish message");
-      Serial.print(subject);
-      Serial.print(" : ");
-      Serial.println(msg);
+      Serial.println("mqtt_publish: MQTT DOWN - can't publish message [topic:"+mqtt_topic+" - payload:"+payload+"]");
     }
   }
   
-  client.publish(subject, msg);
-  digitalWrite(mqtt_MsgLedPin, HIGH);
-  delay(200);
-  digitalWrite(mqtt_MsgLedPin, LOW);
+  // publish OK
+  if ( client.publish(mqtt_topic.c_str(), payload.c_str()) ) {
+    Serial.println("mqtt_publish: topic:"+mqtt_topic+" - payload:"+payload);
+    digitalWrite(mqtt_MsgLedPin, HIGH);
+    delay(200);
+    digitalWrite(mqtt_MsgLedPin, LOW);
+  }
+  // publish FAILED
+  else {
+    Serial.println("mqtt_publish: FAILED - topic:"+mqtt_topic+" - payload:"+payload);
+  }
+}
+
+// Format topic to xxxx/yyyyy
+// - overload topic root with esp32 id if no root present
+String mqtt_format_topic(String topic) {
+  
+  String mqtt_topic = topic;
+  if ( topic.indexOf("/")==-1 ) {
+    mqtt_topic = esp32_id+"/"+topic;
+  }
+
+  return(mqtt_topic);
 }
 
 
+/**
+ * MQTT Pub Helpers
+ */
+
+void mqtt_pub(String topic, String msg) {
+  mqtt_publish(topic, "{\"msg\":\""+msg+"\"}");
+}
+
+void mqtt_pub(String topic, String msg, String payload) {
+  mqtt_publish(topic, "{\"msg\":\""+msg+"\", \"payload\":{"+payload+"}}");
+}
+
+void mqtt_pub_notify(String msg) {
+  mqtt_pub("notify", msg);
+}
+
+void mqtt_pub_notify(String msg, String payload) {
+  mqtt_pub("notify", msg, payload);
+}
+
+void mqtt_pub_warning(String msg) {
+  mqtt_pub_notify(msg);
+  mqtt_publish("warning", msg);
+}
+
+void mqtt_pub_warning(String msg, String payload) {
+  mqtt_pub_notify(msg, payload);
+  mqtt_pub("warning", msg, payload);
+}
+
+void mqtt_pub_error(String msg) {
+  mqtt_pub_notify(msg);
+  mqtt_publish("error", msg);
+}
+
+void mqtt_pub_error(String msg, String payload) {
+  mqtt_pub_notify(msg, payload);
+  mqtt_pub("error", msg, payload);
+}
+
+/**
+ * MQTT callback sample
+ */
 
 /* for subscription (later) */
 void callback_func_sample(char* topic, byte* message, unsigned int length) {
