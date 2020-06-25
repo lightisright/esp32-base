@@ -1,4 +1,4 @@
-void core_touch( void * pvParameters ){
+void core_touch( void * pvParameters ) {
   
     String taskMessage = "Task (DHT) running on core ";
     taskMessage = taskMessage + xPortGetCoreID();

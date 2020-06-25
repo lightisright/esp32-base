@@ -1,6 +1,6 @@
 //essa função será responsável apenas por atualizar as informações no 
 //display a cada 100ms
-void core_mqtt( void * pvParameters ){
+void core_mqtt( void * pvParameters ) {
 
     String taskMessage = "Task (MQTT) running on core ";
     taskMessage = taskMessage + xPortGetCoreID();
