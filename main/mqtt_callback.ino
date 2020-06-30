@@ -33,9 +33,9 @@ void mqtt_callback(char* topic, byte* message, unsigned int length) {
       digitalWrite(pump_RelayPin, LOW);
     }
     else {
-      mqtt_pub_error("UNKNOWN Pump message triggered on "+topic_str, "\""+messageTemp+"\"");
+      mqtt_pub_error("UNKNOWN Pump message triggered on "+topic_str, "\"pump\":\""+messageTemp+"\"");
     }
-    mqtt_pub_notify("Pump "+messageTemp+" triggered on "+topic_str, "\""+messageTemp+"\"");
+    mqtt_pub_notify("Pump "+messageTemp+" triggered on "+topic_str, "\"pump\":\""+messageTemp+"\"");
   }
   
   // esp32swim/heater
@@ -47,9 +47,9 @@ void mqtt_callback(char* topic, byte* message, unsigned int length) {
       digitalWrite(heater_RelayPin, LOW);
     }
     else {
-      mqtt_pub_error("UNKNOWN Heater message triggered on "+topic_str, "\""+messageTemp+"\"");
+      mqtt_pub_error("UNKNOWN Heater message triggered on "+topic_str, "\"heater\":\""+messageTemp+"\"");
     }
-    mqtt_pub_notify("Heater "+messageTemp+" triggered on "+topic_str, "\""+messageTemp+"\"");
+    mqtt_pub_notify("Heater "+messageTemp+" triggered on "+topic_str, "\"heater\":\""+messageTemp+"\"");
   }
 
   // esp32swim/restart
