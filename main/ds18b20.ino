@@ -73,13 +73,13 @@ char* ds18b20_getJsonByAddress(uint8_t *addresses, int nb_sensors) {
 
   ds18b20_json_complete[0]='{';
   ds18b20_json_complete[1]='\0';
-  uint8_t addr[8];
+  uint8_t *addr;
 
   sensors.requestTemperatures();
 
   for(int i=0; i < nb_sensors; i++) {
     uint8_t address[8];
-    address = addresses[i][0];
+    address[0] = *(addresses+(i*8));
     if ( strlen(ds18b20_json_complete) > 2 ) {
       strcat(ds18b20_json_complete, ", ");
     }
