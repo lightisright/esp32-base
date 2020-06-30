@@ -77,12 +77,14 @@ char* ds18b20_getJsonByAddress(uint8_t *addresses, int nb_sensors) {
 
   sensors.requestTemperatures();
 
-  for(int i=0; i < nb_sensors*8; i+=8) {
-    *addr = addresses[i];
+  for(int i=0; i < nb_sensors; i++) {
+    uint8_t address[8];
+    address = addresses[i][0];
     if ( strlen(ds18b20_json_complete) > 2 ) {
       strcat(ds18b20_json_complete, ", ");
     }
-    sprintf(ds18b20_json, "\"%02hx%02hx-%02hx%02hx%02hx%02hx%02hx%02hx\": %.1f", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], sensors.getTempC(addr));
+    sprintf(ds18b20_json, "\"%02hx%02hx-%02hx%02hx%02hx%02hx%02hx%02hx\": %.1f", address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7], 
+    sensors.getTempC(address));
     strcat(ds18b20_json_complete, ds18b20_json);
   }
 
