@@ -69,7 +69,8 @@ char* ds18b20_getJson() {
 /**
  * Get DS18B20 temp by address (needs addresses as parameter)
  */
-char* ds18b20_getJsonByAddress(uint8_t *addresses, int nb_sensors) {
+/*char* ds18b20_getJsonByAddress(uint8_t *addresses, int nb_sensors) {*/
+char* ds18b20_getJsonByAddress() {
 
   ds18b20_json_complete[0]='{';
   ds18b20_json_complete[1]='\0';
@@ -77,16 +78,16 @@ char* ds18b20_getJsonByAddress(uint8_t *addresses, int nb_sensors) {
 
   sensors.requestTemperatures();
 
-  for(int i=0; i < nb_sensors; i++) {
-    uint8_t address[8];
-    address[0] = *(addresses+(i*8));
+  /*for(int i=0; i < nb_sensors; i++) {*/
+    uint8_t address[8] = {0x28, 0xff, 0x27, 0xe7, 0x68, 0x14, 0x03, 0x9b};  //28ff-27e76814039b
+    //address[0] = *(addresses+(i*8));
     if ( strlen(ds18b20_json_complete) > 2 ) {
       strcat(ds18b20_json_complete, ", ");
     }
     sprintf(ds18b20_json, "\"%02hx%02hx-%02hx%02hx%02hx%02hx%02hx%02hx\": %.1f", address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7], 
     sensors.getTempC(address));
     strcat(ds18b20_json_complete, ds18b20_json);
-  }
+  /*}*/
 
   strcat(ds18b20_json_complete, "}");
 
