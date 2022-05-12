@@ -1,4 +1,4 @@
-const int VALUE_THRESHOLD = 30;
+const int VALUE_THRESHOLD = 15;
 
 int TOUCH_SENSOR_VALUE;
 
