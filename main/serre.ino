@@ -5,12 +5,15 @@ void hardcoded_arrosage() {
 
   EEPROM.begin(EEPROM_SIZE);
 
+  pinMode(pump_RelayPin, OUTPUT);
+  pinMode(heater_RelayPin, OUTPUT);
+
   mqtt_pub_notify("Hardcoded arrosage activated.... waiting 10s....");
 
   mqtt_pub_notify("hardcoded_arrosage: Electrovanne: ON....");
   digitalWrite(heater_RelayPin, HIGH);
 
-  delay(50);
+  delay(20000); // attente ouverture vanne
 
   mqtt_pub_notify("hardcoded_arrosage: Pompe: ON....");
   digitalWrite(pump_RelayPin, HIGH);
