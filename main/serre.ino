@@ -19,7 +19,7 @@ void hardcoded_arrosage() {
   digitalWrite(pump_RelayPin, HIGH);
 
   mqtt_pub_notify("hardcoded_arrosage: Arrosage in progress 60s....");
-  delay(60000);
+  delay(4*60000);
 
   mqtt_pub_notify("hardcoded_arrosage: Pompe: OFF....");
   digitalWrite(pump_RelayPin, LOW);
