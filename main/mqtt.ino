@@ -28,21 +28,23 @@ void mqtt_setcallback(void (&callback_func)(char* topic, byte* message, unsigned
 void mqtt_manage(void (&mqtt_subscription_func)()) {
 
   while(true) {
-    if ( !__mqtt_up() ) {
-      mqtt_pub_warning("MQTT: Service down... Attempting new connexion...");
-      if ( !__mqtt_connect() ) {
-        mqtt_pub_error("MQTT: CONNEXION FAILED - wait 2 minutes before new connexion attempt...");
+    if ( wifi_status() ) {
+      if ( !__mqtt_up() ) {
+        mqtt_pub_warning("MQTT: Service down... Attempting new connexion...");
+        if ( !__mqtt_connect() ) {
+          mqtt_pub_error("MQTT: CONNEXION FAILED - wait 2 minutes before new connexion attempt...");
+        }
+        else {
+          mqtt_pub_notify("MQTT: IP address: "+WiFi.localIP().toString());
+          mqtt_pub_notify("MQTT: Subscribing to topics & start loop...");
+          mqtt_subscription_func();
+          //delay(1000);
+          while(client.loop()) { delay(1000); }
+        }
       }
-      else {
-        mqtt_pub_notify("MQTT: IP address: "+WiFi.localIP().toString());
-        mqtt_pub_notify("MQTT: Subscribing to topics & start loop...");
-        mqtt_subscription_func();
-        //delay(1000);
-        while(client.loop()) { delay(1000); }
-      }
+      // wait 15 secondsbetween 2 connexion checks / attempts
+      delay(15*1000);
     }
-    // wait 2 minutes between 2 connexion checks / attempts
-    delay(2*60*1000);
   }
 }
 
@@ -98,7 +100,7 @@ void mqtt_publish(String topic, String payload) {
   }
   
   // publish OK
-  if ( client.publish(mqtt_topic.c_str(), payload.c_str()) ) {
+  if ( __mqtt_up() && client.publish(mqtt_topic.c_str(), payload.c_str()) ) {
     Serial.println("mqtt_publish: topic:"+mqtt_topic+" - payload:"+payload);
     digitalWrite(mqtt_MsgLedPin, HIGH);
     delay(200);
