@@ -2,7 +2,7 @@ void mqtt_subscriptions() {
 
   String topic;
 
-  mqtt_gpio_setup()
+  mqtt_gpio_setup();
   
   topic = esp32_id+"/heater";
   client.subscribe(topic.c_str());
