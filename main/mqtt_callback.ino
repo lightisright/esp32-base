@@ -21,8 +21,9 @@ void mqtt_callback(char* topic, byte* message, unsigned int length) {
     messageTemp += (char)message[i];
   }
 
-  Serial.print("Message arrived on topic: "+topic_str+". Message: "+messageTemp);
-  mqtt_pub_notify(topic_str, messageTemp);
+  // TRACE
+  //Serial.print("Message arrived on topic: "+topic_str+". Message: "+messageTemp);
+  //mqtt_pub_notify(topic_str, messageTemp);
   
   // esp32swim/pump
   if (mqtt_match_topic(topic_str, "pump")) {
