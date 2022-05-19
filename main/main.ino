@@ -32,8 +32,8 @@ void setup() {
   xTaskCreatePinnedToCore(core_serre, "core_serre", 10000, NULL, 3, NULL, taskCoreOne);
   
   // Touch buttons thread
-  delay(5000);
-  xTaskCreatePinnedToCore(core_touch, "core_touch", 10000, NULL, 4, NULL, taskCoreOne);
+  //delay(5000);
+  //xTaskCreatePinnedToCore(core_touch, "core_touch", 10000, NULL, 4, NULL, taskCoreOne);
 }
 
 void loop() {
