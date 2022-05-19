@@ -20,7 +20,7 @@ void mqtt_gpio_setup() {
 
 void mqtt_notify_error(String topic_str, String messageTemp) {
   
-  mqtt_pub_error("UNKNOWN message triggered on "+topic_str, ". Message: "+messageTemp+"\"");
+  mqtt_pub_error("UNKNOWN message", "\"topic\":\""+topic_str+"\",\"message\":\""+messageTemp+"\"");
 }
 
 /* for MQTT subscription if needed */
