@@ -27,9 +27,9 @@ void setup() {
   xTaskCreatePinnedToCore(core_mqtt, "core_mqtt", 10000, NULL, 2, NULL, taskCoreOne);
   
   // Temperature / humidity sensors thread
-  delay(5000);
+  //delay(5000);
   //xTaskCreatePinnedToCore(core_temp, "core_temp", 10000, NULL, 3, NULL, taskCoreOne);
-  xTaskCreatePinnedToCore(core_serre, "core_serre", 10000, NULL, 3, NULL, taskCoreOne);
+  //xTaskCreatePinnedToCore(core_serre, "core_serre", 10000, NULL, 3, NULL, taskCoreOne);
   
   // Touch buttons thread
   //delay(5000);
