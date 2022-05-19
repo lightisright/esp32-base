@@ -1,6 +1,6 @@
 void core_temp( void * pvParameters ) {
   
-    String taskMessage = "Task (DHT) running on core ";
+    String taskMessage = "Task (temp) running on core ";
     taskMessage = taskMessage + xPortGetCoreID();
     Serial.println(taskMessage);
 
