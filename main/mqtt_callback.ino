@@ -2,6 +2,8 @@ void mqtt_subscriptions() {
 
   String topic;
 
+  mqtt_gpio_setup()
+  
   topic = esp32_id+"/heater";
   client.subscribe(topic.c_str());
   topic = esp32_id+"/pump";
@@ -10,6 +12,16 @@ void mqtt_subscriptions() {
   client.subscribe(topic.c_str());
 }
 
+void mqtt_gpio_setup() {
+  
+  pinMode(pump_RelayPin, OUTPUT);
+  pinMode(heater_RelayPin, OUTPUT);
+}
+
+void mqtt_notify_error(String topic_str, String messageTemp) {
+  
+  mqtt_pub_error("UNKNOWN message triggered on "+topic_str, ". Message: "+messageTemp+"\"");
+}
 
 /* for MQTT subscription if needed */
 void mqtt_callback(char* topic, byte* message, unsigned int length) {
@@ -34,7 +46,7 @@ void mqtt_callback(char* topic, byte* message, unsigned int length) {
       digitalWrite(pump_RelayPin, LOW);
     }
     else {
-      mqtt_pub_error("UNKNOWN Pump message triggered on "+topic_str, "\"pump\":\""+messageTemp+"\"");
+      mqtt_notify_error(topic_str, messageTemp);
     }
     mqtt_pub_notify("Pump "+messageTemp+" triggered on "+topic_str, "\"pump\":\""+messageTemp+"\"");
   }
@@ -48,14 +60,19 @@ void mqtt_callback(char* topic, byte* message, unsigned int length) {
       digitalWrite(heater_RelayPin, LOW);
     }
     else {
-      mqtt_pub_error("UNKNOWN Heater message triggered on "+topic_str, "\"heater\":\""+messageTemp+"\"");
+      mqtt_notify_error(topic_str, messageTemp);
     }
     mqtt_pub_notify("Heater "+messageTemp+" triggered on "+topic_str, "\"heater\":\""+messageTemp+"\"");
   }
 
   // esp32swim/restart
   else if (mqtt_match_topic(topic_str, "restart")) {
-        mqtt_pub_notify("ESP Restart triggered");
-        ESP.restart();
+    mqtt_pub_notify("ESP Restart triggered");
+    ESP.restart();
+  }
+
+  // UNKNOWN MESSAGE
+  else {
+    mqtt_notify_error(topic_str, messageTemp);
   }
 }
