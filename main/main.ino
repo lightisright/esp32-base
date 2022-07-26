@@ -4,32 +4,41 @@ static uint8_t taskCoreZero = 0;
 static uint8_t taskCoreOne  = 1;
 
 /* Multithreading method prototype */
-/*
-xTaskCreatePinnedToCore(coreTaskZero,   // função que implementa a tarefa
-                    "coreTaskZero",     // nome da tarefa
-                    10000,              // número de palavras a serem alocadas para uso com a pilha da tarefa
-                    NULL,               // parâmetro de entrada para a tarefa (pode ser NULL)
-                    1,                  // prioridade da tarefa (0 a N)
-                    NULL,               // referência para a tarefa (pode ser NULL)
-                    taskCoreOne);       // Núcleo que executará a tarefa
+/* https://techtutorialsx.com/2017/05/09/esp32-running-code-on-a-specific-core/
+ *  
+    xTaskCreatePinnedToCore(
+                task,       //Function to implement the task 
+                "taskname", //Name of the task
+                6000,       //Stack size in words 
+                NULL,       //Task input parameter 
+                0,          //Priority of the task 
+                NULL,       //Task handle.
+                1);         //Core where the task should run 
 */
 
 void setup() {
 
   Serial.begin(115200);
 
-  // WIFI Thread
-  delay(5000);
-  xTaskCreatePinnedToCore(core_wifi, "core_wifi", 10000, NULL, 1, NULL, taskCoreOne);
+  #ifdef DEBUG
+    Serial.println("*******************************************************");
+    Serial.println("*                    WARNING                          *");
+    Serial.println("*             DEBUG mode ACTIVATED !!!!               *");
+    Serial.println("*******************************************************");
+  #endif
   
-  // MQTT Thread
-  delay(5000);
-  xTaskCreatePinnedToCore(core_mqtt, "core_mqtt", 10000, NULL, 2, NULL, taskCoreOne);
+  // WIFI Thread
+  //delay(5000);
+  //xTaskCreatePinnedToCore(core_wifi, "core_wifi", 10000, NULL, 0, NULL, taskCoreOne);
+  
+  // MQTT Thread (lower priority
+  //delay(5000);
+  //xTaskCreatePinnedToCore(core_mqtt, "core_mqtt", 10000, NULL, 1, NULL, taskCoreOne);
   
   // Temperature / humidity sensors thread
   //delay(5000);
   //xTaskCreatePinnedToCore(core_temp, "core_temp", 10000, NULL, 3, NULL, taskCoreOne);
-  //xTaskCreatePinnedToCore(core_serre, "core_serre", 10000, NULL, 3, NULL, taskCoreOne);
+  //xTaskCreatePinnedToCore(core_serre, "core_serre", 10000, NULL, 50, NULL, taskCoreOne);
   
   // Touch buttons thread
   //delay(5000);
@@ -39,5 +48,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   // no need with threads
-  arrosage_serre();
+  #ifdef ESP32SERRE
+    arrosage_serre();
+  #endif
 }

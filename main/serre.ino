@@ -6,7 +6,12 @@ void arrosage_serre() {
 
   Preferences preferences;
   int delay_minutes = 0;      // starting delay in minutes (also used internally between 2 arrosages)
-  int duration_minutes = 1;   // duration in minutes
+  int duration_minutes = 10;   // duration in minutes
+
+  #ifdef DEBUG
+    Serial.println("DEBUG Mode: force duration to 1 minute)");
+    duration_minutes = 1;
+  #endif
 
   // get delay & duration from memory
   preferences.begin(esp32_id.c_str(), false);
@@ -28,7 +33,9 @@ void arrosage_serre() {
     }
     Serial.print("Delay before next arrosage: ");
     Serial.print(delaytime);
-    Serial.println(" secondes");
+    Serial.print(" secondes (");
+    Serial.print(delaytime/60);
+    Serial.println(" minutes)");
     delay(delaytime*1000); 
 
     _do_arrosage_serre(read_duration_minutes);
@@ -39,8 +46,11 @@ void arrosage_serre() {
     preferences.end();
     
     // set next arrosage in 24 hours
-    //read_delay_minutes = 60*24;       // for real condition
-    read_delay_minutes = 60*1;       // for testing purpose
+    read_delay_minutes = 60*24;       // for real condition
+    #ifdef DEBUG
+      Serial.println("DEBUG Mode: force delay to 15 minutes)");
+      read_delay_minutes = 15*1;       // for testing purpose
+    #endif
   }
 }
 
