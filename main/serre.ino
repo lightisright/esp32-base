@@ -6,7 +6,7 @@ void arrosage_serre() {
 
   Preferences preferences;
   int delay_minutes = 0;      // starting delay in minutes (also used internally between 2 arrosages)
-  int duration_minutes = 10;   // duration in minutes
+  int duration_minutes = 16;   // duration in minutes
 
   #ifdef DEBUG
     Serial.println("DEBUG Mode: force duration to 1 minute)");
